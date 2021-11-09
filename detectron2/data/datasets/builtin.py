@@ -45,7 +45,7 @@ _PREDEFINED_SPLITS_COCO["coco"] = {
     "coco_2017_test-dev": ("coco/test2017", "coco/annotations/image_info_test-dev2017.json"),
     "coco_2017_val_100": ("coco/val2017", "coco/annotations/instances_val2017_100.json"),
 
-    # ocr datasets register    
+    # ocr datasets register
     "totaltext":("totaltext/train_images", "totaltext/train.json"),
     "ctw1500":("ctw1500/train_images", "ctw1500/train.json"),
     "icdar2013":("icdar2013/train_images", "icdar2013/train.json"),
@@ -108,7 +108,7 @@ _PREDEFINED_SPLITS_COCO_PANOPTIC = {
 }
 
 
-def register_all_coco(root="***"):  # put your root path of ocr datasets here
+def register_all_coco(root="/home/ubuntu/EfficientNet/datasets"):  # put your root path of ocr datasets here
     for dataset_name, splits_per_dataset in _PREDEFINED_SPLITS_COCO.items():
         for key, (image_root, json_file) in splits_per_dataset.items():
             # Assume pre-defined datasets live in `./datasets`.

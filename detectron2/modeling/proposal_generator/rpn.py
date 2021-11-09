@@ -111,7 +111,7 @@ class RPN(nn.Module):
             False: cfg.MODEL.RPN.POST_NMS_TOPK_TEST,
         }
         self.boundary_threshold = cfg.MODEL.RPN.BOUNDARY_THRESH
-
+        print(input_shape)
         self.anchor_generator = build_anchor_generator(
             cfg, [input_shape[f] for f in self.in_features]
         )

@@ -8,7 +8,7 @@ from detectron2.layers import Conv2d, ShapeSpec, get_norm
 
 from .backbone import Backbone
 from .build import BACKBONE_REGISTRY
-from .resnet import build_resnet_backbone
+from .efficientnet import build_efficientnet_backbone
 
 __all__ = ["build_resnet_fpn_backbone", "build_retinanet_resnet_fpn_backbone", "FPN"]
 
@@ -120,7 +120,10 @@ class FPN(Backbone):
         """
         # Reverse feature maps into top-down order (from low to high resolution)
         bottom_up_features = self.bottom_up(x)
+        # print(bottom_up_features.keys())
         x = [bottom_up_features[f] for f in self.in_features[::-1]]
+        for i in x:
+            print(i.size())
         results = []
         prev_features = self.lateral_convs[0](x[0])
         results.append(self.output_convs[0](prev_features))
@@ -198,7 +201,7 @@ class LastLevelP6P7(nn.Module):
 
 
 @BACKBONE_REGISTRY.register()
-def build_resnet_fpn_backbone(cfg, input_shape: ShapeSpec):
+def build_efficientnet_fpn_backbone(cfg):
     """
     Args:
         cfg: a detectron2 CfgNode
@@ -206,7 +209,7 @@ def build_resnet_fpn_backbone(cfg, input_shape: ShapeSpec):
     Returns:
         backbone (Backbone): backbone module, must be a subclass of :class:`Backbone`.
     """
-    bottom_up = build_resnet_backbone(cfg, input_shape)
+    bottom_up = build_efficientnet_backbone()
     in_features = cfg.MODEL.FPN.IN_FEATURES
     out_channels = cfg.MODEL.FPN.OUT_CHANNELS
     backbone = FPN(
@@ -221,7 +224,7 @@ def build_resnet_fpn_backbone(cfg, input_shape: ShapeSpec):
 
 
 @BACKBONE_REGISTRY.register()
-def build_retinanet_resnet_fpn_backbone(cfg, input_shape: ShapeSpec):
+def build_retinanet_efficientnet_fpn_backbone(cfg):
     """
     Args:
         cfg: a detectron2 CfgNode
@@ -229,7 +232,7 @@ def build_retinanet_resnet_fpn_backbone(cfg, input_shape: ShapeSpec):
     Returns:
         backbone (Backbone): backbone module, must be a subclass of :class:`Backbone`.
     """
-    bottom_up = build_resnet_backbone(cfg, input_shape)
+    bottom_up = build_efficientnet_backbone()
     in_features = cfg.MODEL.FPN.IN_FEATURES
     out_channels = cfg.MODEL.FPN.OUT_CHANNELS
     in_channels_p6p7 = bottom_up.out_feature_channels["res5"]

@@ -124,7 +124,7 @@ _C.DATALOADER.FILTER_EMPTY_ANNOTATIONS = True
 # ---------------------------------------------------------------------------- #
 _C.MODEL.BACKBONE = CN()
 
-_C.MODEL.BACKBONE.NAME = "build_resnet_backbone"
+_C.MODEL.BACKBONE.NAME = "build_efficientnet_fpn_backbone"
 # Add StopGrad at a specified stage so the bottom layers are frozen
 _C.MODEL.BACKBONE.FREEZE_AT = 2
 
@@ -189,7 +189,7 @@ _C.MODEL.RPN.HEAD_NAME = "StandardRPNHead"  # used by RPN_HEAD_REGISTRY
 
 # Names of the input feature maps to be used by RPN
 # e.g., ["p2", "p3", "p4", "p5", "p6"] for FPN
-_C.MODEL.RPN.IN_FEATURES = ["res4"]
+_C.MODEL.RPN.IN_FEATURES = ["p2", "p3", "p4", "p5"]
 # Remove RPN anchors that go outside the image by BOUNDARY_THRESH pixels
 # Set to -1 or a large value, e.g. 100000, to disable pruning anchors
 _C.MODEL.RPN.BOUNDARY_THRESH = -1
