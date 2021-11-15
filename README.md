@@ -28,7 +28,7 @@ Our detection code will save text contours to a txt file for each image. For cal
 # Train a new model
 Before training，please register your datasets in detectron2/data/datasets/builtin.py. Set training implementation details in configs/ocr/***.yaml.  To train a model with 4 gpus，please run:
 
-    python tools/train_net.py --num-gpus 4 --config-file configs/ocr/icdar2013_101_FPN.yaml
+    python tools/train_net.py --num-gpus 1 --config-file configs/ocr/icdar2013_101_FPN_custom.yaml
 
 # Annotation example
 The annotation example can be found in [annotation_example](https://github.com/ying09/TextFuseNet/tree/master/annotation_example).
