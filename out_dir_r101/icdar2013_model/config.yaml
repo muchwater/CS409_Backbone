@@ -265,7 +265,7 @@ MODEL:
     - 0.0625
     POOLER_TYPE: ROIAlignV2
     SAMPLING_RATIO: 2
-  WEIGHTS: ./out_dir_r101/icdar2013_model/model_ic13_r101.pth
+  WEIGHTS: null
 OUTPUT_DIR: ./out_dir_r101/icdar2013_model/
 SEED: -1
 SOLVER:

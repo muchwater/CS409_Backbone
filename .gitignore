@@ -1,3 +1,4 @@
 *.pth
 input_images/
 datasets/
+*.pyc
