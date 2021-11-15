@@ -52,7 +52,7 @@ class FPN(Backbone):
         in_strides = [bottom_up.out_feature_strides[f] for f in in_features]
         in_channels = [bottom_up.out_feature_channels[f] for f in in_features]
 
-        _assert_strides_are_log2_contiguous(in_strides)
+        _assert_strides_are_log2_contiguous(in_strides) #TODO: check assertion is essential!!! by CS409
         lateral_convs = []
         output_convs = []
 

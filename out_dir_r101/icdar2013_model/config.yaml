@@ -57,10 +57,10 @@ MODEL:
   FPN:
     FUSE_TYPE: sum
     IN_FEATURES:
-    - res2
-    - res3
-    - res4
-    - res5
+    - eff5
+    - eff6
+    - eff7
+    - eff8
     NORM: ''
     OUT_CHANNELS: 256
   KEYPOINT_ON: false
@@ -97,10 +97,10 @@ MODEL:
     NORM: FrozenBN
     NUM_GROUPS: 32
     OUT_FEATURES:
-    - res2
-    - res3
-    - res4
-    - res5
+    - eff5
+    - eff6
+    - eff7
+    - eff8
     RES2_OUT_CHANNELS: 256
     RES5_DILATION: 1
     STEM_OUT_CHANNELS: 64
