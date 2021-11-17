@@ -2,3 +2,4 @@
 input_images/
 datasets/
 *.pyc
+events.out.tfevents.*

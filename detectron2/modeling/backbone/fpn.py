@@ -123,8 +123,8 @@ class FPN(Backbone):
         bottom_up_features = self.bottom_up(x)
         # print(bottom_up_features.keys())
         x = [bottom_up_features[f] for f in self.in_features[::-1]]
-        for i in x:
-            print(i.size())
+        for idx, i in enumerate(x):
+            print("eff"+str(idx+2),":",i.size())
         results = []
         prev_features = self.lateral_convs[0](x[0])
         results.append(self.output_convs[0](prev_features))

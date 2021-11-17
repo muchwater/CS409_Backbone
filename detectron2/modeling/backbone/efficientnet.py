@@ -195,7 +195,7 @@ class EfficientNet(Backbone):
         self._out_feature_channels = {"stem": self._conv_stem.out_channels}
 
         # Build blocks
-        self.stages_and_names = {}
+        self.stages_and_names = []
         self.names = ["stem", "head"]
         for idx, block_args in enumerate(self._blocks_args):
             blocks = []
@@ -219,7 +219,7 @@ class EfficientNet(Backbone):
                 blocks.append(MBConvBlock(block_args, self._global_params, image_size=image_size))
                 image_size = calculate_output_image_size(image_size, block_args.stride)  # stride = 1
             stage = nn.Sequential(*blocks)
-            self.stages_and_names = (stage, name)
+            self.stages_and_names.append((stage, name))
             self.add_module(name, stage)
             
         # Head
@@ -341,21 +341,24 @@ class EfficientNet(Backbone):
         """
         # Convolution layers
         outputs = {}
+        print(inputs.size())
         x = self._swish(self._bn0(self._conv_stem(inputs)))
         if "stem" in self._out_features:
             outputs["stem"] = x
         for stage, name in self.stages_and_names:
+            print("name:",name)
             x = stage(x)
+            print("size:",x.size())
             if name in self._out_features:
                 outputs[name] = x
         # Pooling and final linear layers
-        if self._global_params.include_top:
-            x = self._conv_head(x)
-            x = x.flatten(start_dim=1)
-            x = self._dropout(x)
-            x = self._fc(x)
-            if "head" in self._out_features:
-                outputs["head"] = x
+        # if self._global_params.include_top:
+        #     # x = self._conv_head(x)
+        #     x = x.flatten(start_dim=1)
+        #     x = self._dropout(x)
+        #     x = self._fc(x)
+        #     if "head" in self._out_features:
+        #         outputs["head"] = x
         return outputs
 
     @classmethod
