@@ -195,14 +195,13 @@ class EfficientNet(Backbone):
         self._out_feature_channels = {"stem": self._conv_stem.out_channels}
 
         # Build blocks
-        self.stages_and_names = []
-        self.names = []
+        self.stages_and_names = {}
+        self.names = ["stem", "head"]
         for idx, block_args in enumerate(self._blocks_args):
-            stage = nn.ModuleList([])
+            blocks = []
             # Update block input and output filters based on depth multiplier.
             name = "eff" + str(idx + 2)
             self.names.append(name)
-            self.stages_and_names.append((stage, name))
             block_args = block_args._replace(
                 input_filters=round_filters(block_args.input_filters, self._global_params),
                 output_filters=round_filters(block_args.output_filters, self._global_params),
@@ -212,20 +211,20 @@ class EfficientNet(Backbone):
             self._out_feature_strides[name] = current_stride
             self._out_feature_channels[name] = block_args.output_filters
             # The first block needs to take care of stride and filter size increase.
-            stage.append(MBConvBlock(block_args, self._global_params, image_size=image_size))
+            blocks.append(MBConvBlock(block_args, self._global_params, image_size=image_size))
             image_size = calculate_output_image_size(image_size, block_args.stride)
             if block_args.num_repeat > 1:  # modify block_args to keep same output size
                 block_args = block_args._replace(input_filters=block_args.output_filters, stride=1)
             for _ in range(block_args.num_repeat - 1):
-                stage.append(MBConvBlock(block_args, self._global_params, image_size=image_size))
-                # image_size = calculate_output_image_size(image_size, block_args.stride)  # stride = 1
-            # print("stage name:",name)
-            # print("stage stride:", block_args.stride)
-            # print("current stride:", current_stride,"\n")
-            
-            
+                blocks.append(MBConvBlock(block_args, self._global_params, image_size=image_size))
+                image_size = calculate_output_image_size(image_size, block_args.stride)  # stride = 1
+            stage = nn.Sequential(*blocks)
+            self.stages_and_names[name] = stage
+            self.add_module(name, stage)
 
 
+        
+            
         # Head
         in_channels = block_args.output_filters  # output of final block
         out_channels = round_filters(1280, self._global_params)
@@ -239,7 +238,6 @@ class EfficientNet(Backbone):
             self._dropout = nn.Dropout(self._global_params.dropout_rate)
             self._fc = nn.Linear(out_channels, self._global_params.num_classes)
         
-
         # set activation to memory efficient swish by default
         self._swish = MemoryEfficientSwish()
 
