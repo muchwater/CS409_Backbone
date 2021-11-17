@@ -219,11 +219,8 @@ class EfficientNet(Backbone):
                 blocks.append(MBConvBlock(block_args, self._global_params, image_size=image_size))
                 image_size = calculate_output_image_size(image_size, block_args.stride)  # stride = 1
             stage = nn.Sequential(*blocks)
-            self.stages_and_names[name] = stage
+            self.stages_and_names = (stage, name)
             self.add_module(name, stage)
-
-
-        
             
         # Head
         in_channels = block_args.output_filters  # output of final block
@@ -240,26 +237,6 @@ class EfficientNet(Backbone):
         
         # set activation to memory efficient swish by default
         self._swish = MemoryEfficientSwish()
-
-
-        ######## DUMP CODES ########
-        # self.names = []
-        # current_stride = 2
-        # self._out_feature_strides = {"stem": current_stride}
-        # self._out_feature_channels = {"stem": self._conv_stem.out_channels}
-        # print("start")
-        # self.stage = nn.Sequential(self._blocks)
-        # for idx in range(4):
-        #     name = "res" + str(idx + 2)
-        #     self.add_module(name, self.stage)
-        #     self.names.append(name)
-        #     current_stride *= 2
-        #     self._out_feature_strides[name] = current_stride
-        #     self._out_feature_channels[name] = 40 # TODO: check output feature channels
-        
-        # print("out feature channels:",self._out_feature_channels)
-        # print("out feature strides:",self._out_feature_strides)
-        ############################
 
     def set_swish(self, memory_efficient=True):
         """Sets swish function as memory efficient (for training) or standard (for export).
@@ -364,30 +341,21 @@ class EfficientNet(Backbone):
         """
         # Convolution layers
         outputs = {}
-        print(inputs.size())
-        print("STEM")
         x = self._swish(self._bn0(self._conv_stem(inputs)))
         if "stem" in self._out_features:
             outputs["stem"] = x
-        print(x.size())
-        print("BLOCK")
-        for name in self.names:
-            print(x.size())
-            for block in self._blocks:
-                x = block(x)
-                print(x.size())
-            x = self._avg_pooling(x)
-            print("after pooling",x.size())
-            print(x.size())
+        for stage, name in self.stages_and_names:
+            x = stage(x)
             if name in self._out_features:
                 outputs[name] = x
-             
         # Pooling and final linear layers
         if self._global_params.include_top:
             x = self._conv_head(x)
             x = x.flatten(start_dim=1)
             x = self._dropout(x)
             x = self._fc(x)
+            if "head" in self._out_features:
+                outputs["head"] = x
         return outputs
 
     @classmethod

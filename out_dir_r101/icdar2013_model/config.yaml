@@ -93,9 +93,9 @@ MODEL:
     - false
     - false
     - false
-    DEPTH: 101
+    DEPTH: 50
     NORM: FrozenBN
-    NUM_GROUPS: 32
+    NUM_GROUPS: 1
     OUT_FEATURES:
     - eff3
     - eff4
@@ -104,8 +104,8 @@ MODEL:
     RES2_OUT_CHANNELS: 256
     RES5_DILATION: 1
     STEM_OUT_CHANNELS: 64
-    STRIDE_IN_1X1: false
-    WIDTH_PER_GROUP: 8
+    STRIDE_IN_1X1: true
+    WIDTH_PER_GROUP: 64
   RETINANET:
     BBOX_REG_WEIGHTS: &id001
     - 1.0
