@@ -171,7 +171,7 @@ class EfficientNet(Backbone):
         self._global_params = global_params
         self._blocks_args = blocks_args
         if out_features == None:
-            self._out_features = ["eff5", "eff6", "eff7", "eff8"]
+            self._out_features = ["eff3", "eff4", "eff5", "eff7"]
         else:
             self._out_features = out_features
         # Batch norm parameters
@@ -200,12 +200,17 @@ class EfficientNet(Backbone):
         for idx, block_args in enumerate(self._blocks_args):
             stage = nn.ModuleList([])
             # Update block input and output filters based on depth multiplier.
+            name = "eff" + str(idx + 2)
+            self.names.append(name)
+            self.stages_and_names.append((stage, name))
             block_args = block_args._replace(
                 input_filters=round_filters(block_args.input_filters, self._global_params),
                 output_filters=round_filters(block_args.output_filters, self._global_params),
                 num_repeat=round_repeats(block_args.num_repeat, self._global_params)
             )
-
+            current_stride *= block_args.stride[0]
+            self._out_feature_strides[name] = current_stride
+            self._out_feature_channels[name] = block_args.output_filters
             # The first block needs to take care of stride and filter size increase.
             stage.append(MBConvBlock(block_args, self._global_params, image_size=image_size))
             image_size = calculate_output_image_size(image_size, block_args.stride)
@@ -214,13 +219,10 @@ class EfficientNet(Backbone):
             for _ in range(block_args.num_repeat - 1):
                 stage.append(MBConvBlock(block_args, self._global_params, image_size=image_size))
                 # image_size = calculate_output_image_size(image_size, block_args.stride)  # stride = 1
+            # print("stage name:",name)
+            # print("stage stride:", block_args.stride)
+            # print("current stride:", current_stride,"\n")
             
-            name = "eff" + str(idx + 2)
-            self.names.append(name)
-            self.stages_and_names.append((stage, name))
-            current_stride *= block_args.stride
-            self._out_feature_strides[name] = current_stride
-            self._out_feature_channels[name] = block_args.output_filters
             
 
 
@@ -257,8 +259,8 @@ class EfficientNet(Backbone):
         #     self._out_feature_strides[name] = current_stride
         #     self._out_feature_channels[name] = 40 # TODO: check output feature channels
         
-        print("out feature channels:",self._out_feature_channels)
-        print("out feature strides:",self._out_feature_strides)
+        # print("out feature channels:",self._out_feature_channels)
+        # print("out feature strides:",self._out_feature_strides)
         ############################
 
     def set_swish(self, memory_efficient=True):
