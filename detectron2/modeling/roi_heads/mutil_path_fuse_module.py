@@ -81,6 +81,9 @@ class Mutil_Path_Fuse_Module(nn.Module):
         self_area = self_area.repeat(len(proposal_boxes), 1)
         inter_percent = inter_area / self_area
         char_pos = inter_percent > 0.9
+        
+        print("mask feature size:",x.size())
+        print("char pos size:",char_pos.size())
 
         for i in range(len(proposal_boxes)):
             if classes[i] != 0:

@@ -171,7 +171,7 @@ class EfficientNet(Backbone):
         self._global_params = global_params
         self._blocks_args = blocks_args
         if out_features == None:
-            self._out_features = ["eff3", "eff4", "eff5", "eff7"]
+            self._out_features = ["eff3", "eff4", "eff6", "eff8"]
         else:
             self._out_features = out_features
         # Batch norm parameters
@@ -223,15 +223,13 @@ class EfficientNet(Backbone):
             self.add_module(name, stage)
             
         # Head
-        in_channels = block_args.output_filters  # output of final block
-        out_channels = round_filters(1280, self._global_params)
-        Conv2d = get_same_padding_conv2d(image_size=image_size)
-        self._conv_head = Conv2d(in_channels, out_channels, kernel_size=1, bias=False)
-        self._bn1 = nn.BatchNorm2d(num_features=out_channels, momentum=bn_mom, eps=bn_eps)
-        
-        # Final linear layer
-        self._avg_pooling = nn.AdaptiveAvgPool2d(1)
         if self._global_params.include_top:
+            in_channels = block_args.output_filters  # output of final block
+            out_channels = round_filters(1280, self._global_params)
+            Conv2d = get_same_padding_conv2d(image_size=image_size)
+            self._conv_head = Conv2d(in_channels, out_channels, kernel_size=1, bias=False)
+            self._bn1 = nn.BatchNorm2d(num_features=out_channels, momentum=bn_mom, eps=bn_eps)
+            # Final linear layer
             self._dropout = nn.Dropout(self._global_params.dropout_rate)
             self._fc = nn.Linear(out_channels, self._global_params.num_classes)
         
@@ -352,13 +350,11 @@ class EfficientNet(Backbone):
             if name in self._out_features:
                 outputs[name] = x
         # Pooling and final linear layers
-        # if self._global_params.include_top:
-        #     # x = self._conv_head(x)
-        #     x = x.flatten(start_dim=1)
-        #     x = self._dropout(x)
-        #     x = self._fc(x)
-        #     if "head" in self._out_features:
-        #         outputs["head"] = x
+        if self._global_params.include_top:
+            x = self._conv_head(x)
+            x = x.flatten(start_dim=1)
+            x = self._dropout(x)
+            x = self._fc(x)
         return outputs
 
     @classmethod

@@ -59,8 +59,8 @@ MODEL:
     IN_FEATURES:
     - eff3
     - eff4
-    - eff5
-    - eff7
+    - eff6
+    - eff8
     NORM: ''
     OUT_CHANNELS: 256
   KEYPOINT_ON: false
@@ -99,8 +99,8 @@ MODEL:
     OUT_FEATURES:
     - eff3
     - eff4
-    - eff5
-    - eff7
+    - eff6
+    - eff8
     RES2_OUT_CHANNELS: 256
     RES5_DILATION: 1
     STEM_OUT_CHANNELS: 64
