@@ -65,7 +65,6 @@ class GeneralizedRCNN(nn.Module):
         """
         if not self.training:
             return self.inference(batched_inputs)
-
         images = self.preprocess_image(batched_inputs)
         if "instances" in batched_inputs[0]:
             gt_instances = [x["instances"].to(self.device) for x in batched_inputs]
@@ -76,7 +75,6 @@ class GeneralizedRCNN(nn.Module):
             gt_instances = [x["targets"].to(self.device) for x in batched_inputs]
         else:
             gt_instances = None
-
         features = self.backbone(images.tensor)
 
         if self.proposal_generator:
@@ -146,7 +144,9 @@ class GeneralizedRCNN(nn.Module):
         """
         images = [x["image"].to(self.device) for x in batched_inputs]
         images = [self.normalizer(x) for x in images]
+        print("BEFORE from_tensors method:", images[0].size())
         images = ImageList.from_tensors(images, self.backbone.size_divisibility)
+        print("AFTER from_tensors method:", images.tensor.size())
         return images
 
 
