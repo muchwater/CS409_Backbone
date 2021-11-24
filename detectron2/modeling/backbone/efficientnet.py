@@ -28,7 +28,7 @@ from detectron2.layers import ShapeSpec
 VALID_MODELS = (
     'efficientnet-b0', 'efficientnet-b1', 'efficientnet-b2', 'efficientnet-b3',
     'efficientnet-b4', 'efficientnet-b5', 'efficientnet-b6', 'efficientnet-b7',
-    'efficientnet-b8',
+    'efficientnet-b8', 'efficientnet-bx',
 
     # Support the construction of 'efficientnet-l2' without pretrained weights
     'efficientnet-l2'
@@ -465,4 +465,4 @@ class EfficientNet(Backbone):
 
 @BACKBONE_REGISTRY.register()
 def build_efficientnet_backbone():
-    return EfficientNet.from_name("efficientnet-b3")
+    return EfficientNet.from_name("efficientnet-bx")

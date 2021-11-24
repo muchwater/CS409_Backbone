@@ -141,7 +141,7 @@ def main(args):
     consider writing your own training loop or subclassing the trainer.
     """
     trainer = Trainer(cfg)
-    # trainer.resume_or_load(resume=True)
+    trainer.resume_or_load(resume=args.resume)
     if cfg.TEST.AUG.ENABLED:
         trainer.register_hooks(
             [hooks.EvalHook(0, lambda: trainer.test_with_TTA(cfg, trainer.model))]

@@ -251,7 +251,7 @@ class DefaultTrainer(SimpleTrainer):
 
         self.register_hooks(self.build_hooks())
 
-    def resume_or_load(self, resume=True):
+    def resume_or_load(self, resume=False):
         """
         If `resume==True`, and last checkpoint exists, resume from it.
 
