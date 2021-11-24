@@ -209,7 +209,7 @@ class ROIPooler(nn.Module):
             x[0].size(0), len(box_lists)
         )
 
-        pooler_fmt_boxes = convert_boxes_to_pooler_format(box_lists)
+        pooler_fmt_boxes = convert_boxes_to_pooler_format(box_lists) #TODO: This is error part. the len(pooler_fmt_boxes) is too large
 
         if num_level_assignments == 1:
             return self.level_poolers[0](x[0], pooler_fmt_boxes)
@@ -226,7 +226,6 @@ class ROIPooler(nn.Module):
         output = torch.zeros(
             (num_boxes, num_channels, output_size, output_size), dtype=dtype, device=device
         )
-
         for level, (x_level, pooler) in enumerate(zip(x, self.level_poolers)):
             inds = torch.nonzero(level_assignments == level).squeeze(1)
             pooler_fmt_boxes_level = pooler_fmt_boxes[inds]

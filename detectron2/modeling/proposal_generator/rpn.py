@@ -91,14 +91,14 @@ class RPN(nn.Module):
     def __init__(self, cfg, input_shape: Dict[str, ShapeSpec]):
         super().__init__()
 
-        # fmt: off
-        self.min_box_side_len        = cfg.MODEL.PROPOSAL_GENERATOR.MIN_SIZE
-        self.in_features             = cfg.MODEL.RPN.IN_FEATURES
-        self.nms_thresh              = cfg.MODEL.RPN.NMS_THRESH
-        self.batch_size_per_image    = cfg.MODEL.RPN.BATCH_SIZE_PER_IMAGE
-        self.positive_fraction       = cfg.MODEL.RPN.POSITIVE_FRACTION
-        self.smooth_l1_beta          = cfg.MODEL.RPN.SMOOTH_L1_BETA
-        self.loss_weight             = cfg.MODEL.RPN.LOSS_WEIGHT
+        # fmt: off NOTE: this is commented by CS409
+        self.min_box_side_len        = cfg.MODEL.PROPOSAL_GENERATOR.MIN_SIZE # 0
+        self.in_features             = cfg.MODEL.RPN.IN_FEATURES # ["p2", "p3", "p4", "p5", "p6"]
+        self.nms_thresh              = cfg.MODEL.RPN.NMS_THRESH  # 0.7
+        self.batch_size_per_image    = cfg.MODEL.RPN.BATCH_SIZE_PER_IMAGE # 256
+        self.positive_fraction       = cfg.MODEL.RPN.POSITIVE_FRACTION # 0.5
+        self.smooth_l1_beta          = cfg.MODEL.RPN.SMOOTH_L1_BETA # 0.0 / use only L1
+        self.loss_weight             = cfg.MODEL.RPN.LOSS_WEIGHT # 1.0
         # fmt: on
 
         # Map from self.training state to train/test settings
@@ -111,7 +111,6 @@ class RPN(nn.Module):
             False: cfg.MODEL.RPN.POST_NMS_TOPK_TEST,
         }
         self.boundary_threshold = cfg.MODEL.RPN.BOUNDARY_THRESH
-        print(input_shape)
         self.anchor_generator = build_anchor_generator(
             cfg, [input_shape[f] for f in self.in_features]
         )

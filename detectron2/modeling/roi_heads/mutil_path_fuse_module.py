@@ -1,3 +1,4 @@
+from os import XATTR_SIZE_MAX
 import torch
 from torch import nn
 from detectron2.structures import Boxes
@@ -72,23 +73,19 @@ class Mutil_Path_Fuse_Module(nn.Module):
         else:
             proposal_boxes = proposals[0].pred_boxes
             classes = proposals[0].pred_classes
-
         if len(proposal_boxes) == 0:
               return x
-              
         self_area, inter_area = get_selfarea_and_interarea(proposal_boxes, proposal_boxes)
         self_area = self_area.reshape(1, self_area.shape[0])
         self_area = self_area.repeat(len(proposal_boxes), 1)
         inter_percent = inter_area / self_area
         char_pos = inter_percent > 0.9
         
-        print("mask feature size:",x.size())
-        print("char pos size:",char_pos.size())
-
+        
         for i in range(len(proposal_boxes)):
             if classes[i] != 0:
                 char = x[i]
-                char = char.reshape([1, char.shape[0], char.shape[1], char.shape[2]])
+                char = char.reshape([1, char.shape[0], char.shape[1], char.shape[2]]) # just add 1 dimension
                 char = self.char_conv3x3(char)
                 char = self.char_conv1x1(char)
                 result.append(char)
@@ -102,14 +99,12 @@ class Mutil_Path_Fuse_Module(nn.Module):
                     result.append(text)
                 else:
                     text = x[i]
-                    text = text.reshape([1, text.shape[0], text.shape[1], text.shape[2]])
+                    text = text.reshape([1, text.shape[0], text.shape[1], text.shape[2]]) # just add 1 dimension
                     text = self.text_conv3x3(text)
                     text = self.text_conv1x1(text)
                     result.append(text)
-
         char_context = torch.stack(result)
         char_context = char_context.squeeze(1)
-
         feature_fuse = char_context + x + global_context
 
         feature_fuse = self.conv3x3(feature_fuse)

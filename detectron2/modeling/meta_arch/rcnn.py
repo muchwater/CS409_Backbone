@@ -29,7 +29,6 @@ class GeneralizedRCNN(nn.Module):
 
         self.device = torch.device(cfg.MODEL.DEVICE)
         self.backbone = build_backbone(cfg)
-        print("OUTPUT SHAPE IS",self.backbone.output_shape())
         self.proposal_generator = build_proposal_generator(cfg, self.backbone.output_shape())
         self.roi_heads = build_roi_heads(cfg, self.backbone.output_shape())
 
@@ -76,14 +75,13 @@ class GeneralizedRCNN(nn.Module):
         else:
             gt_instances = None
         features = self.backbone(images.tensor)
-
+        
         if self.proposal_generator:
-            proposals, proposal_losses = self.proposal_generator(images, features, gt_instances)
+            proposals, proposal_losses = self.proposal_generator(images, features, gt_instances) # RPN
         else:
             assert "proposals" in batched_inputs[0]
             proposals = [x["proposals"].to(self.device) for x in batched_inputs]
             proposal_losses = {}
-
         _, detector_losses = self.roi_heads(images, features, proposals, gt_instances)
 
         losses = {}
@@ -144,9 +142,7 @@ class GeneralizedRCNN(nn.Module):
         """
         images = [x["image"].to(self.device) for x in batched_inputs]
         images = [self.normalizer(x) for x in images]
-        print("BEFORE from_tensors method:", images[0].size())
         images = ImageList.from_tensors(images, self.backbone.size_divisibility)
-        print("AFTER from_tensors method:", images.tensor.size())
         return images
 
 

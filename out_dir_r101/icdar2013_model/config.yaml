@@ -60,7 +60,7 @@ MODEL:
     - eff3
     - eff4
     - eff6
-    - eff8
+    - eff9
     NORM: ''
     OUT_CHANNELS: 256
   KEYPOINT_ON: false
@@ -100,7 +100,7 @@ MODEL:
     - eff3
     - eff4
     - eff6
-    - eff8
+    - eff9
     RES2_OUT_CHANNELS: 256
     RES5_DILATION: 1
     STEM_OUT_CHANNELS: 64

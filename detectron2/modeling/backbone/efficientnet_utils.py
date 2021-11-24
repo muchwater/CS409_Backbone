@@ -280,8 +280,6 @@ class Conv2dStaticSamePadding(Conv2d):
 
     def forward(self, x):
         x = self.static_padding(x)
-        # print("input:",x.size())
-        # print("weight:",self.weight.size())
         x = F.conv2d(x, self.weight, self.bias, self.stride, self.padding, self.dilation, self.groups)
         return x
 

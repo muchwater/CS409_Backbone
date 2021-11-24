@@ -512,7 +512,7 @@ class StandardROIHeads(ROIHeads):
     def _init_mask_head(self, cfg):
         # fmt: off
         self.mask_on           = cfg.MODEL.MASK_ON
-        if not self.mask_on:
+        if not self.mask_on: # if mask option is false, return None
             return
         pooler_resolution = cfg.MODEL.ROI_MASK_HEAD.POOLER_RESOLUTION
         pooler_scales     = tuple(1.0 / self.feature_strides[k] for k in self.in_features)
@@ -558,7 +558,7 @@ class StandardROIHeads(ROIHeads):
         )
 
     def _init_seg_head(self, cfg):
-        self.fpn_features_fused_level = cfg.MODEL.TEXTFUSENET_SEG_HEAD.FPN_FEATURES_FUSED_LEVEL
+        self.fpn_features_fused_level = cfg.MODEL.TEXTFUSENET_SEG_HEAD.FPN_FEATURES_FUSED_LEVEL # 2
         self.seg_head = build_seg_head(cfg)
 
     def _init_mutil_path_fuse_module(self, cfg):
@@ -654,7 +654,7 @@ class StandardROIHeads(ROIHeads):
             )
             return pred_instances
 
-    def _forward_mask(self, features, instances,targets=None):
+    def _forward_mask(self, features, instances,targets=None): # instances := proposals
         """
         Forward logic of the mask prediction branch.
 
@@ -668,7 +668,7 @@ class StandardROIHeads(ROIHeads):
             In training, a dict of losses.
             In inference, update `instances` with new fields "pred_masks" and return it.
         """
-        if not self.mask_on:
+        if not self.mask_on: # not using mask
             return {} if self.training else instances
 
         if self.training:

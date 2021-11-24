@@ -238,7 +238,7 @@ _C.MODEL.ROI_HEADS.NUM_CLASSES = 64
 # Names of the input feature maps to be used by ROI heads
 # Currently all heads (box, mask, ...) use the same input feature map list
 # e.g., ["p2", "p3", "p4", "p5"] is commonly used for FPN
-_C.MODEL.ROI_HEADS.IN_FEATURES = ["eff5"]
+_C.MODEL.ROI_HEADS.IN_FEATURES = ["res4"]
 # IOU overlap ratios [IOU_THRESHOLD]
 # Overlap threshold for an RoI to be considered background (if < IOU_THRESHOLD)
 # Overlap threshold for an RoI to be considered foreground (if >= IOU_THRESHOLD)

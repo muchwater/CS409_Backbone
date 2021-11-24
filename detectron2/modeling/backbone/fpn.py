@@ -47,8 +47,6 @@ class FPN(Backbone):
         """
         super(FPN, self).__init__()
         assert isinstance(bottom_up, Backbone)
-        print(bottom_up.out_feature_strides)
-        print(bottom_up.out_feature_channels)
         # Feature map strides and channels from the bottom up network (e.g. ResNet)
         in_strides = [bottom_up.out_feature_strides[f] for f in in_features]
         in_channels = [bottom_up.out_feature_channels[f] for f in in_features]
@@ -121,10 +119,7 @@ class FPN(Backbone):
         """
         # Reverse feature maps into top-down order (from low to high resolution)
         bottom_up_features = self.bottom_up(x)
-        # print(bottom_up_features.keys())
         x = [bottom_up_features[f] for f in self.in_features[::-1]]
-        for idx, i in enumerate(x):
-            print("eff"+str(idx+2),":",i.size())
         results = []
         prev_features = self.lateral_convs[0](x[0])
         results.append(self.output_convs[0](prev_features))
@@ -236,7 +231,7 @@ def build_retinanet_efficientnet_fpn_backbone(cfg):
     bottom_up = build_efficientnet_backbone()
     in_features = cfg.MODEL.FPN.IN_FEATURES
     out_channels = cfg.MODEL.FPN.OUT_CHANNELS
-    in_channels_p6p7 = bottom_up.out_feature_channels["res5"]
+    in_channels_p6p7 = bottom_up.out_feature_channels["eff9"]
     backbone = FPN(
         bottom_up=bottom_up,
         in_features=in_features,
