@@ -25,13 +25,13 @@ INPUT:
     TYPE: relative_range
   FORMAT: BGR
   MASK_FORMAT: polygon
-  MAX_SIZE_TEST: 300
-  MAX_SIZE_TRAIN: 300
-  MIN_SIZE_TEST: 300
+  MAX_SIZE_TEST: 320
+  MAX_SIZE_TRAIN: 320
+  MIN_SIZE_TEST: 320
   MIN_SIZE_TRAIN:
-  - 300
-  - 300
-  - 300
+  - 320
+  - 320
+  - 320
   MIN_SIZE_TRAIN_SAMPLING: choice
 MODEL:
   ANCHOR_GENERATOR:
@@ -265,15 +265,15 @@ MODEL:
     - 0.0625
     POOLER_TYPE: ROIAlignV2
     SAMPLING_RATIO: 2
-  WEIGHTS: null
-OUTPUT_DIR: ./out_dir_r101/icdar2013_model/
+  WEIGHTS: /home/ubuntu/EfficientNet/out_dir_r101/icdar2013_model/model_ic13_r101.pth
+OUTPUT_DIR: /home/ubuntu/EfficientNet/out_dir_r101/icdar2013_model/
 SEED: -1
 SOLVER:
   BASE_LR: 0.001
   BIAS_LR_FACTOR: 1.0
   CHECKPOINT_PERIOD: 2500
   GAMMA: 0.1
-  IMS_PER_BATCH: 4
+  IMS_PER_BATCH: 1
   LR_SCHEDULER_NAME: WarmupMultiStepLR
   MAX_ITER: 120000
   MOMENTUM: 0.9
